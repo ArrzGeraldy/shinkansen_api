@@ -1,0 +1,169 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Shinkansen Station RESTful API",
+    "description": "API Spec for Shinkansen Station Restful API.\n\n## Authentication\n\nTo access the Shinkansen Station API, you must provide an API key in the request header. \nYou can obtain an API key by following these steps:\n1. Visit the [Home Page Shinkansen API](/).\n2. Sign up or log in to your account.\n3. Navigate to the \"API Keys\" section in your user dashboard.\n4. Use the provided API key in your requests by including it in the `X-API-KEY` header.",
+    "version": "1.0"
+  },
+  "servers": [{ "url": "http://localhost:4000/api/shinkansen" }],
+  "paths": {
+    "/stations": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "tags": ["Shinkansen Station API"],
+        "description": "List all Shinkansen Stations",
+        "summary": "List all Shinkansen Stations",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "p",
+            "description": "The page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all Stations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "error": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Station"
+                      }
+                    },
+
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page_size": {
+                          "type": "integer",
+                          "default": 10
+                        },
+                        "current_page": {
+                          "type": "integer",
+                          "default": 1
+                        },
+                        "total_page": {
+                          "type": "integer"
+                        },
+                        "total_items": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stations/{id}": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "tags": ["Shinkansen Station API"],
+        "summary": "Get station by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "station id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get station",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Station"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-KEY",
+        "description": "authentication for Shinkansen Station API"
+      }
+    },
+    "schemas": {
+      "Station": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "station_name": {
+            "type": "string"
+          },
+          "shinkansen_line": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "prefecture": {
+            "type": "string"
+          },
+          "distance_from_tokyo": {
+            "type": "number",
+            "format": "float"
+          },
+          "company": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
