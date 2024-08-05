@@ -9,4 +9,5 @@ var (
 	ErrUsernameExists = errors.New("username already exists")
 	ErrLogin          = errors.New("invalid username or password")
 	ErrInvalidInput   = errors.New("input field min 3 and max 100")
+	ErrUnauthorized   = errors.New("unauthorized")
 )

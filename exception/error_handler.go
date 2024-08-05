@@ -20,6 +20,9 @@ func ErrorHandler(writer http.ResponseWriter, err interface{}) {
 			case errors.Is(exception, ErrLogin):
 				loginInvalid(writer,exception);
 
+			case errors.Is(exception, ErrUnauthorized):
+				unauthorizedErr(writer,exception);
+
 			default:
 				internalServerError(writer, exception)
 		}
@@ -58,6 +61,17 @@ func parameterError(writer http.ResponseWriter, err error) {
 	helper.ToResponseJson(writer,response);
 }
 
+func unauthorizedErr(writer http.ResponseWriter, err error){
+	writer.WriteHeader(http.StatusUnauthorized);
+	response := web.WebResponse{
+		Code: 401,
+		Status: "Unauthorized",
+		Error: err.Error(),
+	};
+
+	helper.ToResponseJson(writer,response);
+}
+
 func internalServerError(writer http.ResponseWriter, err error) {
 	writer.WriteHeader(http.StatusInternalServerError)
 
@@ -68,5 +82,4 @@ func internalServerError(writer http.ResponseWriter, err error) {
 	}
 
 	helper.ToResponseJson(writer,response);
-
 }

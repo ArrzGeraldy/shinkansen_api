@@ -52,7 +52,7 @@ func (controller *AuthControllerImpl) Login(writer http.ResponseWriter,req *http
 	sessionKey,err := helper.GenerateSessionKey();
 	helper.PanicIfError(err);
 
-	expiresSession := time.Now().Add(224 * time.Hour);
+	expiresSession := time.Now().Add(24 * time.Hour);
 	isValid,err := controller.Service.Login(req.Context(),reqForm,sessionKey,expiresSession);
 
 	if err != nil {

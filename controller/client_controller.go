@@ -25,44 +25,33 @@ func NewClientController(service service.AuthService) ClientController{
 }
 
 func(controller *ClientControllerImpl) Index(writer http.ResponseWriter, req *http.Request){
-	var pageData = web.PageData{}
-	cookie,err := req.Cookie("session_user");
+	var pageData = web.PageData{};
 
-	if err == nil {
-		user,err := controller.AuthService.FindUserBySession(req.Context(),cookie.Value);
-		if err == nil {
-			pageData = web.PageData{
-				User: user,
-			}
-		}
-		
-	} 
+	user,valid := controller.checkSession(req);
+
+	if valid {
+		pageData.User = user;
+	}
+
 	handler.ClientIndex(writer,pageData);
 }
 
 func(controller *ClientControllerImpl) Dashboard(writer http.ResponseWriter, req *http.Request){
-	var pageData = web.PageData{}
-	cookie,err := req.Cookie("session_user");
-	if err != nil {
-		http.Redirect(writer,req,"/",http.StatusSeeOther);
-	} else {
-		user,err := controller.AuthService.FindUserBySession(req.Context(),cookie.Value);
-		
-		if err != nil {
-			http.Redirect(writer,req,"/",http.StatusSeeOther);
-		} else {
-			pageData = web.PageData{
-				User: user,
-			}
+	var pageData = web.PageData{};
 
-			handler.ClientDashboard(writer,pageData);
-		}
+	user,valid := controller.checkSession(req);
+
+	if valid {
+		pageData.User = user;
+		handler.ClientDashboard(writer,pageData);
+	} else {
+		http.Redirect(writer,req,"/",http.StatusSeeOther);
 	}
 }
 
 func(controller *ClientControllerImpl) SignUp(writer http.ResponseWriter, req *http.Request){
 
-	valid := controller.checkSession(req);
+	_,valid := controller.checkSession(req);
 	
 	if !valid {
 		handler.ClientSignUp(writer,nil)
@@ -74,7 +63,7 @@ func(controller *ClientControllerImpl) SignUp(writer http.ResponseWriter, req *h
 
 func(controller *ClientControllerImpl) Login(writer http.ResponseWriter, req *http.Request){
 
-	valid := controller.checkSession(req);
+	_,valid := controller.checkSession(req);
 
 	if !valid {
 		handler.ClientLogin(writer,nil);
@@ -84,16 +73,18 @@ func(controller *ClientControllerImpl) Login(writer http.ResponseWriter, req *ht
 	http.Redirect(writer,req,"/dashboard",http.StatusSeeOther);
 }
 
-func (controller *ClientControllerImpl) checkSession(req *http.Request)(bool){
-	cookie,err := req.Cookie("session_user");
+func (controller *ClientControllerImpl) checkSession(req *http.Request) (web.UserResponse, bool) {
+    cookie, err := req.Cookie("session_user")
+    var userResponse web.UserResponse
 
-	if err != nil {
-		return false
-	}
-
-	_,err = controller.AuthService.FindUserBySession(req.Context(),cookie.Value);
-
-	return err == nil;
-
-
+    if err != nil {
+        return userResponse, false
+    } 
+    
+    userResponse, err = controller.AuthService.FindUserBySession(req.Context(), cookie.Value)
+    if err != nil {
+        return userResponse, false
+    }
+    
+    return userResponse, true
 }

@@ -32,13 +32,3 @@ func GetDsnEnv() string {
 func GetSecretKey() []byte {
     return SecretKey
 }
-
-// func GetSecretKey(secretKey *[]byte) {
-// 	key := os.Getenv("SECRET_KEY");
-// 	if key == "" {
-// 		log.Fatal("SECRET_KEY environment variable not set");
-// 	}
-
-// 	secretKey = []byte(key);
-
-// }

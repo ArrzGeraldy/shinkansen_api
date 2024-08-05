@@ -34,34 +34,4 @@ func SessionHandler(writer http.ResponseWriter,sessionKey string){
 		HttpOnly: true,
 	}
 	http.SetCookie(writer,cookie);
-	// 2024-08-04T09:45:28.627Z
 }
-
-// func validateSession(sessionKey string) (int, error) {
-// 	var userID int
-// 	var expiresAt time.Time
-
-// 	// Periksa session_key di database
-// 	err := db.QueryRow("SELECT user_id, expires_at FROM sessions WHERE session_key = ?", sessionKey).Scan(&userID, &expiresAt)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	// Periksa apakah sesi sudah kadaluwarsa
-// 	if time.Now().After(expiresAt) {
-// 		return 0, fmt.Errorf("session expired")
-// 	}
-
-// 	return userID, nil
-// }
-
-// func sessionHandler(w http.ResponseWriter, r *http.Request) {
-// 	sessionKey := r.Header.Get("Session-Key")
-// 	userID, err := validateSession(sessionKey)
-// 	if err != nil {
-// 		http.Error(w, "Invalid session", http.StatusUnauthorized)
-// 		return
-// 	}
-
-// 	fmt.Fprintf(w, "Welcome User ID: %d", userID)
-// }
